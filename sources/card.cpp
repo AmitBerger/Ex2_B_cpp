@@ -1,24 +1,17 @@
-#ifndef CARD_HPP
-#define CARD_HPP
+#include "card.hpp"
 
 namespace ariel {
 
-enum class Suit { HEARTS, SPADES, CLUBS, DIAMONDS };
+Card::Card() : suit(Suit::HEARTS), rank(2) {}
 
+Card::Card(Suit suit, int rank) : suit(suit), rank(rank) {}
 
+Suit Card::getSuit() const {
+  return suit;
+}
 
-class Card {
-private:
-  Suit suit;
-  int rank;
-
-public:
-  Card();
-  Card(Suit suit, int rank);
-  Suit getSuit() const;
-  int getRank() const;
-};
+int Card::getRank() const {
+  return rank;
+}
 
 } // namespace ariel
-
-#endif /* CARD_HPP */
