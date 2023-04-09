@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <ostream>
 #include <random>
 
 namespace ariel {
@@ -32,10 +33,18 @@ void Game::shuffle(std::vector<Card> &pile1) {
 int Game::getRoundWinner(Card card1, Card card2) {
   if (card1.getRank() == card2.getRank()) {
     return 0; // tie
-  } else if (card1.getRank() > card2.getRank()) {
-    return 1; // player 1 wins
-  } else {
+  } else if (card1.getRank() == 1 && card2.getRank() == 2) {
     return 2; // player 2 wins
+  } else if (card2.getRank() == 1 && card1.getRank() == 2) {
+    return 1; // player 1 wins
+  } else if (card1.getRank() > card2.getRank() ||
+             (card1.getRank() == 1 && card2.getRank() != 2)) {
+    return 1; // player 1 wins
+  } else if (card2.getRank() > card1.getRank() ||
+             (card2.getRank() == 1 && card1.getRank() != 2)) {
+    return 2; // player 2 wins
+  } else {
+    throw "not good";
   }
 }
 
