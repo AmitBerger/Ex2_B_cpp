@@ -13,14 +13,16 @@ Player::Player(std::string name) {
 
 int Player::stacksize() { return stack.size(); }
 
-int Player::updateScore(int cards) { 
-  return this->score = score + cards; }
+int Player::updateScore(int cards) { return this->score = score + cards; }
+
+void Player::addWin() { this->roundWins++; }
 
 int Player::cardesTaken() { return score; }
 
 const std::string Player::getName() const { return name; }
 
 int Player::getScore() { return score; }
+double Player::getWinRate() { return roundWins; }
 
 void Player::addCard(Card card) { this->stack.push_back(card); }
 

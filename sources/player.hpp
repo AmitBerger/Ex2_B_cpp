@@ -8,6 +8,12 @@
 namespace ariel {
 
 class Player {
+private:
+  std::string name;
+  double roundWins = 0;
+  int score = 0;
+  std::vector<Card> stack;
+
 public:
   Player(std::string name);
   const std::string getName() const;
@@ -18,12 +24,8 @@ public:
   Card drawCard();
   int stacksize();
   int cardesTaken();
-
-
-private:
-  std::string name;
-  int score;
-  std::vector<Card> stack;
+  double getWinRate();
+  void addWin();
 };
 
 } // namespace ariel

@@ -60,9 +60,13 @@ void Game::playTurn() {
   if (!isGameOver()) {
     throw "no cards left!";
   }
+  std::string turnLog = "";
+  numTurns++;
   int cardsInWar = 2;
   Card p1c = player1.drawCard();
   Card p2c = player2.drawCard();
+  turnLog = turnLog + player1.getName() + " played " + p1c.to_string() + ". " +
+            player2.getName() + " played " + p2c.to_string() + ". ";
 
   if (lastTurnDraw) {
     cardsInWar = cardsInWar + this->drawTemp;
@@ -71,18 +75,22 @@ void Game::playTurn() {
   int roundWinner = getRoundWinner(p1c, p2c);
 
   if (roundWinner == 1) {
+    turnLog = turnLog + player1.getName() + " wins.";
     this->lastTurnDraw = false;
-
+    player1.addWin();
     player1.updateScore(cardsInWar + drawTemp);
     this->drawTemp = 0;
   }
   if (roundWinner == 2) {
+    turnLog = turnLog + player2.getName() + " wins.";
     this->lastTurnDraw = false;
-
+    player2.addWin();
     player2.updateScore(cardsInWar + drawTemp);
     drawTemp = 0;
   }
   if (roundWinner == 0) {
+    turnLog = turnLog + " draw.";
+    numDraws++;
 
     if (!isGameOver()) {
 
@@ -96,6 +104,7 @@ void Game::playTurn() {
       lastTurnDraw = true;
     }
   }
+  log.push_back(turnLog);
 }
 
 void Game::playAll() {
@@ -104,10 +113,32 @@ void Game::playAll() {
   }
 }
 
-void Game::printLastTurn() const {}
+void Game::printLastTurn() const { std::cout << log.back() << std::endl; }
 
-void Game::printLog() const {}
-void Game::printStats() const {}
+void Game::printLog() const {
+  for (std::string turns : log) {
+    std::cout << turns << std::endl;
+  }
+}
+void Game::printStats() const {
+  std::cout << "Player 1 (" << player1.getName() << "):" << std::endl;
+  std::cout << "Win rate: " << (player1.getWinRate() / numTurns) * 100 << "%"
+            << std::endl;
+  std::cout << "Cards won: " << player1.cardesTaken() << std::endl;
+  std::cout << "Turns won: " << player1.getWinRate() << std::endl;
+  std::cout << "Draw rate: " << (numDraws / numTurns) * 100 << "%" << std::endl;
+  std::cout << std::endl;
+
+  std::cout << "Player 2 (" << player2.getName() << "):" << std::endl;
+  std::cout << "Win rate: " << (player2.getWinRate() / numTurns) * 100 << "%"
+            << std::endl;
+  std::cout << "Cards won: " << player2.cardesTaken() << std::endl;
+  std::cout << "Turns won: " << player2.getWinRate() << std::endl;
+  std::cout << "Draw rate: " << (numDraws / numTurns) * 100 << "%" << std::endl;
+  std::cout << std::endl;
+
+  std::cout << "Number of draws: " << this->numDraws << std::endl;
+}
 
 void Game::printWiner() const {
   if (player1.getScore() > player2.getScore()) {
