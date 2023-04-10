@@ -38,10 +38,10 @@ int Game::getRoundWinner(Card card1, Card card2) {
     return 2; // player 2 wins
   } else if (card2.getRank() == 1 && card1.getRank() == 2) {
     return 1; // player 1 wins
-  } else if (card1.getRank() > card2.getRank() ||
+  } else if (((card1.getRank() > card2.getRank()) && card2.getRank() != 1) ||
              (card1.getRank() == 1 && card2.getRank() != 2)) {
     return 1; // player 1 wins
-  } else if (card2.getRank() > card1.getRank() ||
+  } else if  (((card2.getRank() > card1.getRank()) && card1.getRank() != 1) ||
              (card2.getRank() == 1 && card1.getRank() != 2)) {
     return 2; // player 2 wins
   } else {
