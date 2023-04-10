@@ -4,6 +4,7 @@
 #include <iostream>
 #include <ostream>
 #include <random>
+#include <string>
 
 namespace ariel {
 Game::Game(Player &player1, Player &player2)
@@ -48,8 +49,8 @@ int Game::getRoundWinner(Card card1, Card card2) {
   }
 }
 
-bool Game::isGameOver() {
-  return player1.stacksize() > 0 || player2.stacksize() > 0;
+bool Game::GameOver() {
+  return player1.stacksize() == 0 || player2.stacksize() == 0;
 }
 
 void Game::playTurn() {
@@ -57,49 +58,54 @@ void Game::playTurn() {
   if (&player1 == &player2) {
     throw "must be two diffrent players!";
   }
-  if (!isGameOver()) {
+  if (GameOver()) {
     throw "no cards left!";
   }
   std::string turnLog = "";
-  numTurns++;
-  int cardsInWar = 2;
+
   Card p1c = player1.drawCard();
   Card p2c = player2.drawCard();
+  int cardsInWar = 2;
+  numTurns++;
   turnLog = turnLog + player1.getName() + " played " + p1c.to_string() + ". " +
             player2.getName() + " played " + p2c.to_string() + ". ";
 
-  if (lastTurnDraw) {
-    cardsInWar = cardsInWar + this->drawTemp;
+  if (lastTurnDraw && !GameOver()) {
+    cardsInWar = cardsInWar + drawTemp;
+    player1.drawCard();
+    player2.drawCard();
   }
 
   int roundWinner = getRoundWinner(p1c, p2c);
 
   if (roundWinner == 1) {
+
     turnLog = turnLog + player1.getName() + " wins.";
-    this->lastTurnDraw = false;
+    lastTurnDraw = false;
     player1.addWin();
     player1.updateScore(cardsInWar + drawTemp);
-    this->drawTemp = 0;
+    drawTemp = 0;
   }
   if (roundWinner == 2) {
+
     turnLog = turnLog + player2.getName() + " wins.";
-    this->lastTurnDraw = false;
+    lastTurnDraw = false;
     player2.addWin();
     player2.updateScore(cardsInWar + drawTemp);
     drawTemp = 0;
   }
   if (roundWinner == 0) {
+
     turnLog = turnLog + " draw.";
     numDraws++;
 
-    if (!isGameOver()) {
+    if (GameOver()) {
+      drawTemp = drawTemp + cardsInWar;
+      player1.updateScore((drawTemp) / 2);
+      player2.updateScore((drawTemp) / 2);
+    } else if (!GameOver()) {
+      numTurns++;
 
-      player1.updateScore((drawTemp + cardsInWar) / 2);
-      player2.updateScore((drawTemp + cardsInWar) / 2);
-    }
-    if (player1.stacksize() > 0 && player2.stacksize() > 0) {
-      player1.drawCard();
-      player2.drawCard();
       drawTemp = drawTemp + 2;
       lastTurnDraw = true;
     }
@@ -108,19 +114,30 @@ void Game::playTurn() {
 }
 
 void Game::playAll() {
-  while (isGameOver()) {
+  while (!GameOver()) {
     playTurn();
   }
 }
 
-void Game::printLastTurn() const { std::cout << log.back() << std::endl; }
+void Game::printLastTurn() const {
+  if (log.size() == 0) {
+    throw "the game did not start!";
+  }
+  std::cout << log.back() << std::endl;
+}
 
 void Game::printLog() const {
+  if (log.size() == 0) {
+    throw "the game did not start!";
+  }
   for (std::string turns : log) {
     std::cout << turns << std::endl;
   }
 }
 void Game::printStats() const {
+  if (log.size() == 0) {
+    throw "the game did not start!";
+  }
   std::cout << "Player 1 (" << player1.getName() << "):" << std::endl;
   std::cout << "Win rate: " << (player1.getWinRate() / numTurns) * 100 << "%"
             << std::endl;
@@ -141,6 +158,9 @@ void Game::printStats() const {
 }
 
 void Game::printWiner() const {
+  if (log.size() == 0) {
+    throw "the game did not start!";
+  }
   if (player1.getScore() > player2.getScore()) {
     std::cout << player1.getName() << " is the Winner!!!" << std::endl;
   } else if (player1.getScore() < player2.getScore()) {

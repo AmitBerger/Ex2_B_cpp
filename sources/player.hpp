@@ -19,7 +19,6 @@ public:
   const std::string getName() const;
   int getScore();
   int updateScore(int cards);
-  int getNumCards() const;
   void addCard(Card card);
   Card drawCard();
   int stacksize();

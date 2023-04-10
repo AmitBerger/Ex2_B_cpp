@@ -39,7 +39,7 @@ std::string Card::suit_to_string(Suit suit) {
   if (suit == Suit::HEARTS) {
     return "HEARTS";
   }
-  throw "NOT A SUIT";
+  return "";
 }
 
 std::string Card::to_string() {

@@ -19,7 +19,7 @@ private:
   int drawTemp = 0;
 
   int getRoundWinner(Card card1, Card card2);
-  bool isGameOver();
+  bool GameOver();
   void shuffle(std::vector<Card> &pile1);
 
 public:
