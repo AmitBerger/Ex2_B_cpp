@@ -41,7 +41,7 @@ int Game::getRoundWinner(Card card1, Card card2) {
   } else if (((card1.getRank() > card2.getRank()) && card2.getRank() != 1) ||
              (card1.getRank() == 1 && card2.getRank() != 2)) {
     return 1; // player 1 wins
-  } else if  (((card2.getRank() > card1.getRank()) && card1.getRank() != 1) ||
+  } else if (((card2.getRank() > card1.getRank()) && card1.getRank() != 1) ||
              (card2.getRank() == 1 && card1.getRank() != 2)) {
     return 2; // player 2 wins
   } else {
@@ -61,14 +61,22 @@ void Game::playTurn() {
   if (GameOver()) {
     throw "no cards left!";
   }
-  std::string turnLog = "";
 
   Card p1c = player1.drawCard();
   Card p2c = player2.drawCard();
   int cardsInWar = 2;
   numTurns++;
-  turnLog = turnLog + player1.getName() + " played " + p1c.to_string() + ". " +
-            player2.getName() + " played " + p2c.to_string() + ". ";
+  int roundWinner = getRoundWinner(p1c, p2c);
+  if (lastTurnDraw) {
+
+    this->turnLog = turnLog + player1.getName() + " played " + p1c.to_string() +
+                    ". " + player2.getName() + " played " + p2c.to_string() +
+                    ". ";
+  } else {
+    turnLog.clear();
+    this->turnLog = player1.getName() + " played " + p1c.to_string() + ". " +
+                    player2.getName() + " played " + p2c.to_string() + ". ";
+  }
 
   if (lastTurnDraw && !GameOver()) {
     cardsInWar = cardsInWar + drawTemp;
@@ -76,11 +84,10 @@ void Game::playTurn() {
     player2.drawCard();
   }
 
-  int roundWinner = getRoundWinner(p1c, p2c);
-
   if (roundWinner == 1) {
 
     turnLog = turnLog + player1.getName() + " wins.";
+    log.push_back(turnLog);
     lastTurnDraw = false;
     player1.addWin();
     player1.updateScore(cardsInWar + drawTemp);
@@ -89,6 +96,7 @@ void Game::playTurn() {
   if (roundWinner == 2) {
 
     turnLog = turnLog + player2.getName() + " wins.";
+    log.push_back(turnLog);
     lastTurnDraw = false;
     player2.addWin();
     player2.updateScore(cardsInWar + drawTemp);
@@ -96,7 +104,7 @@ void Game::playTurn() {
   }
   if (roundWinner == 0) {
 
-    turnLog = turnLog + " draw.";
+    turnLog = turnLog + "draw. ";
     numDraws++;
 
     if (GameOver()) {
@@ -104,13 +112,14 @@ void Game::playTurn() {
       player1.updateScore((drawTemp) / 2);
       player2.updateScore((drawTemp) / 2);
     } else if (!GameOver()) {
-      numTurns++;
 
       drawTemp = drawTemp + 2;
       lastTurnDraw = true;
     }
+    if (!GameOver()) {
+      playTurn();
+    }
   }
-  log.push_back(turnLog);
 }
 
 void Game::playAll() {
