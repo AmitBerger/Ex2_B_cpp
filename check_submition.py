@@ -24,7 +24,7 @@ def pars_input(f):
             commit = line
             continue
     return git_rep , ids , commit
-def run_cmd(cmd , verbos = 1, timeout = 10):
+def run_cmd(cmd , verbos = 1, timeout = 30):
     if verbos == 1:
         print("running: " ,cmd)
     try:

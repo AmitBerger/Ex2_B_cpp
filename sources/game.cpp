@@ -106,8 +106,15 @@ void Game::playTurn() {
 
     turnLog = turnLog + "draw. ";
     numDraws++;
+    if (numDraws == 13) {
+      log.push_back(turnLog);
+      player1.updateScore(26);
+      player2.updateScore(26);
+      cardsInWar = 0;
+      drawTemp = 0;
+    }
 
-    if (GameOver()) {
+    if (GameOver() && numDraws < 13) {
       drawTemp = drawTemp + cardsInWar;
       player1.updateScore((drawTemp) / 2);
       player2.updateScore((drawTemp) / 2);
@@ -116,7 +123,8 @@ void Game::playTurn() {
       drawTemp = drawTemp + 2;
       lastTurnDraw = true;
     }
-    if (!GameOver()) {
+
+    if (!GameOver() && numDraws < 13) {
       playTurn();
     }
   }
