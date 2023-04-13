@@ -61,6 +61,16 @@ void Game::playTurn() {
   if (GameOver()) {
     throw "no cards left!";
   }
+  if (lastTurnDraw && !GameOver()) {
+
+    player1.drawCard();
+    player2.drawCard();
+  }
+  if (GameOver()) {
+    player1.updateScore(drawTemp);
+    player2.updateScore(drawTemp);
+    return;
+  }
 
   Card p1c = player1.drawCard();
   Card p2c = player2.drawCard();
@@ -78,14 +88,11 @@ void Game::playTurn() {
                     player2.getName() + " played " + p2c.to_string() + ". ";
   }
 
-  if (lastTurnDraw && !GameOver()) {
+  if (lastTurnDraw) {
     cardsInWar = cardsInWar + drawTemp;
-    player1.drawCard();
-    player2.drawCard();
   }
 
   if (roundWinner == 1) {
-
     turnLog = turnLog + player1.getName() + " wins.";
     log.push_back(turnLog);
     lastTurnDraw = false;
@@ -94,7 +101,6 @@ void Game::playTurn() {
     drawTemp = 0;
   }
   if (roundWinner == 2) {
-
     turnLog = turnLog + player2.getName() + " wins.";
     log.push_back(turnLog);
     lastTurnDraw = false;
@@ -118,8 +124,8 @@ void Game::playTurn() {
       drawTemp = drawTemp + cardsInWar;
       player1.updateScore((drawTemp) / 2);
       player2.updateScore((drawTemp) / 2);
+      return;
     } else if (!GameOver()) {
-
       drawTemp = drawTemp + 2;
       lastTurnDraw = true;
     }
